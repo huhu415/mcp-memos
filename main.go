@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/huhu415/huhu/routes"
+	"github.com/huhu415/mcp-memos/routes"
 	"github.com/mark3labs/mcp-go/server"
 )
 

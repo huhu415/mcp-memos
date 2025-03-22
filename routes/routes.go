@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	fileoperate "github.com/huhu415/huhu/file-operate"
-	"github.com/huhu415/huhu/llms"
+	fileoperate "github.com/huhu415/mcp-memos/file-operate"
+	"github.com/huhu415/mcp-memos/llms"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
 	"github.com/sirupsen/logrus"

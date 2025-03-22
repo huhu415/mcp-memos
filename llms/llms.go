@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/huhu415/huhu/prompt"
+	"github.com/huhu415/mcp-memos/prompt"
 	"github.com/tmc/langchaingo/llms"
 	"github.com/tmc/langchaingo/llms/anthropic"
 )
