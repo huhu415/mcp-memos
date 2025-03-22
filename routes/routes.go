@@ -11,6 +11,13 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// 版本信息version information
+var (
+	BuildDate string
+	GitCommit string
+	Version   string
+)
+
 type Routes struct {
 	McpServer *server.MCPServer
 	File      *fileoperate.File
@@ -27,11 +34,10 @@ func NewRoutes(filePath string) *Routes {
 	if err != nil {
 		logrus.Panicf("Panic!!! Failed to initialize LLM: %v", err)
 	}
-
 	return &Routes{
 		McpServer: server.NewMCPServer(
-			"Demo 🚀",
-			"1.0.0",
+			"Huhu 🚀",
+			Version,
 			server.WithInstructions(`你是一个可以协助用户记录文本和检索文本的助手
 			- 注意每次记录时, 对于记录内容的描述要尽可能详细, 以便于以后的准确检索
 			- 检索时, 对于描述, 建议更具体一些, 以便于更准确地检索到相关的文本
