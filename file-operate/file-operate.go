@@ -20,7 +20,7 @@ func OpenFile(path string) (*File, error) {
 
 	fullPath := filepath.Join(dir, path)
 
-	file, err := os.OpenFile(fullPath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0644)
+	file, err := os.OpenFile(fullPath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0o644)
 	if err != nil {
 		return nil, err
 	}

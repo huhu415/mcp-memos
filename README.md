@@ -24,8 +24,8 @@ Add MCP-Memos to the macPilotCli configuration file
         "command": "path/to/mcp-memos",
         "env": {
           "LLM_TOKEN": "xxxxxx",
-          "LLM_BASE_URL": "xxxxx" # optional, default is https://api.anthropic.com
-          "ANTHROPIC_MODEL": "xxxxx" # optional, default is claude-3-7-sonnet-20250219
+          "LLM_BASE_URL": "xxxxxxxx/v1",
+          "ANTHROPIC_MODEL": "xxxxx"
         }
       }
     }
@@ -54,3 +54,7 @@ Please help me find the records about {description}
 
 > [!NOTE]
 > The description can be different each time, as long as the description is roughly the same thing
+>
+> LLM_BASE_URL optional, default is https://api.anthropic.com
+>
+> ANTHROPIC_MODEL optional, default is claude-3-7-sonnet-20250219
