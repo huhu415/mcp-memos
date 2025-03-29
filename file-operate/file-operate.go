@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"unicode"
 
 	"github.com/bytedance/sonic"
 )
@@ -34,7 +35,7 @@ func OpenFile(path string, fullPathOK bool) (*File, error) {
 		if err != nil {
 			return nil, err
 		}
-		fullPath = filepath.Join(execPath, path)
+		fullPath = filepath.Join(filepath.Dir(execPath), path)
 	}
 
 	file, err := os.OpenFile(fullPath, os.O_RDWR|os.O_CREATE, 0o644)
@@ -59,6 +60,14 @@ func (f *File) ReadMemos() map[uint64]Memo {
 
 func (f *File) AppendMemo(memo Memo) {
 	memo.ID = f.findMaxID() + 1
+
+	waitToAppend := removeWhitespace(memo.Content)
+	for _, v := range f.memos {
+		if removeWhitespace(v.Content) == waitToAppend {
+			return
+		}
+	}
+
 	f.memos[memo.ID] = memo
 }
 
@@ -110,4 +119,14 @@ func (f *File) Close() error {
 		return err
 	}
 	return f.File.Close()
+}
+
+// 移除字符串中的空白字符
+func removeWhitespace(str string) string {
+	return strings.Map(func(r rune) rune {
+		if unicode.IsSpace(r) {
+			return -1
+		}
+		return r
+	}, str)
 }
