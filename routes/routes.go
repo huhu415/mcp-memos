@@ -84,10 +84,10 @@ func (r *Routes) SaveText() {
 			return mcp.NewToolResultError("内容必须是一个字符串"), nil
 		}
 
-		err := r.File.Write(fmt.Appendf([]byte{}, "%s: \n```\n%s\n```\n\n--------------------- \n\n", purpose, text))
-		if err != nil {
-			return mcp.NewToolResultError("无法写入文件" + err.Error()), nil
-		}
+		r.File.AppendMemo(fileoperate.Memo{
+			Description: purpose,
+			Content:     text,
+		})
 
 		return mcp.NewToolResultText(fmt.Sprintf("文本`%s`已保存到%s", text, r.File.Name())), nil
 	}
@@ -108,12 +108,7 @@ func (r *Routes) SearchRelatedText() {
 		}
 		mcp.NewLoggingMessageNotification(mcp.LoggingLevelInfo, "get_answer", description)
 
-		content, err := r.File.Read()
-		if err != nil {
-			return mcp.NewToolResultError("无法读取文件" + err.Error()), nil
-		}
-
-		answer, err := r.llm.SearchContent(ctx, description, content)
+		answer, err := r.llm.SearchContent(ctx, description, r.File.LLMReadableMemos())
 		if err != nil {
 			return mcp.NewToolResultError("无法检索文本" + err.Error()), nil
 		}

@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/huhu415/mcp-memos/prompt"
+	"github.com/sirupsen/logrus"
 	"github.com/tmc/langchaingo/llms"
 	"github.com/tmc/langchaingo/llms/anthropic"
 )
@@ -25,6 +26,8 @@ func NewAnthropicClient() (*AnthropicClient, error) {
 	if baseURL == "" {
 		baseURL = "https://api.anthropic.com"
 	}
+
+	logrus.Debugf("model: %s, token: %s, baseURL: %s", model, token, baseURL)
 
 	client, err := anthropic.New(
 		anthropic.WithModel(model),
@@ -59,8 +62,8 @@ func (ac *AnthropicClient) CompletionDescribeContent(ctx context.Context, des, c
 	return c1.Content, nil
 }
 
-func (ac *AnthropicClient) SearchContent(ctx context.Context, des string, allContent []byte) (string, error) {
-	promdesc := strings.ReplaceAll(prompt.SearchAnswer, "{muti_block}", string(allContent))
+func (ac *AnthropicClient) SearchContent(ctx context.Context, des string, allContent string) (string, error) {
+	promdesc := strings.ReplaceAll(prompt.SearchAnswer, "{muti_block}", allContent)
 	message := []llms.MessageContent{
 		{Role: llms.ChatMessageTypeSystem, Parts: []llms.ContentPart{llms.TextContent{Text: promdesc}}},
 		{Role: llms.ChatMessageTypeHuman, Parts: []llms.ContentPart{llms.TextContent{Text: des}}},

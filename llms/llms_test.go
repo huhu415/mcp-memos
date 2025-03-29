@@ -3,24 +3,27 @@ package llms
 import (
 	"context"
 	"fmt"
-	"os"
 	"testing"
 
 	_ "embed"
 
+	fileoperate "github.com/huhu415/mcp-memos/file-operate"
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestSearchContent(t *testing.T) {
+	logrus.SetLevel(logrus.DebugLevel)
+
 	ac, err := NewAnthropicClient()
 	assert.NoError(t, err)
 
 	ctx := context.Background()
 	des := "Mark apikey API密钥"
-	content, err := os.ReadFile("muti_block_test.md")
+	file, err := fileoperate.OpenFile("muti_block_test.md")
 	assert.NoError(t, err)
 
-	result, err := ac.SearchContent(ctx, des, content)
+	result, err := ac.SearchContent(ctx, des, file.LLMReadableMemos())
 	assert.NoError(t, err)
 
 	fmt.Println(result)

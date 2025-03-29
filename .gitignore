@@ -31,3 +31,6 @@ huhu
 Makefile
 dist
 mcp-memos
+.history
+.vscode
+test.json

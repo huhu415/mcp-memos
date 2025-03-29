@@ -8,7 +8,8 @@ import (
 )
 
 func main() {
-	r := routes.NewRoutes("test.md")
+	r := routes.NewRoutes("test.json")
+	defer r.File.Close()
 
 	r.SaveText()
 	r.Repeat()
