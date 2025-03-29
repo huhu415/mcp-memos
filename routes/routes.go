@@ -110,7 +110,7 @@ func (r *Routes) SearchRelatedText() {
 
 		answer, err := r.llm.SearchContent(ctx, description, r.File.LLMReadableMemos())
 		if err != nil {
-			return mcp.NewToolResultError("无法检索文本" + err.Error()), nil
+			return mcp.NewToolResultError("无法检索文本, 错误:" + err.Error()), nil
 		}
 
 		return mcp.NewToolResultText(answer), nil

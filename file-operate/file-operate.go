@@ -18,7 +18,7 @@ type Memo struct {
 
 type File struct {
 	*os.File
-	memos []Memo
+	memos map[uint64]Memo
 }
 
 func OpenFile(path string) (*File, error) {
@@ -37,16 +37,21 @@ func OpenFile(path string) (*File, error) {
 	var memos []Memo
 	sonic.ConfigDefault.NewDecoder(file).Decode(&memos)
 
-	return &File{file, memos}, nil
+	memoMap := make(map[uint64]Memo)
+	for _, memo := range memos {
+		memoMap[memo.ID] = memo
+	}
+
+	return &File{file, memoMap}, nil
 }
 
-func (f *File) ReadMemos() []Memo {
+func (f *File) ReadMemos() map[uint64]Memo {
 	return f.memos
 }
 
 func (f *File) AppendMemo(memo Memo) {
 	memo.ID = f.findMaxID() + 1
-	f.memos = append(f.memos, memo)
+	f.memos[memo.ID] = memo
 }
 
 func (f *File) LLMReadableMemos() string {
@@ -59,9 +64,9 @@ func (f *File) LLMReadableMemos() string {
 
 func (f *File) findMaxID() uint64 {
 	maxID := uint64(0)
-	for _, memo := range f.memos {
-		if memo.ID > maxID {
-			maxID = memo.ID
+	for id := range f.memos {
+		if id > maxID {
+			maxID = id
 		}
 	}
 	return maxID
@@ -78,7 +83,12 @@ func (f *File) WriteToFile() error {
 		return err
 	}
 
-	byt, err := sonic.MarshalIndent(f.memos, "", "  ")
+	memos := make([]Memo, 0, len(f.memos))
+	for _, memo := range f.memos {
+		memos = append(memos, memo)
+	}
+
+	byt, err := sonic.MarshalIndent(memos, "", "  ")
 	if err != nil {
 		return err
 	}
