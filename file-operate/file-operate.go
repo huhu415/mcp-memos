@@ -16,6 +16,10 @@ type Memo struct {
 	Content     string `json:"content"`
 }
 
+func (m *Memo) String() string {
+	return fmt.Sprintf("id: `%d`\n描述: `%s`\n内容: ```\n%s\n```\n\n ------------ \n\n", m.ID, m.Description, m.Content)
+}
+
 type File struct {
 	*os.File
 	memos map[uint64]Memo
@@ -57,7 +61,7 @@ func (f *File) AppendMemo(memo Memo) {
 func (f *File) LLMReadableMemos() string {
 	sb := strings.Builder{}
 	for _, memo := range f.memos {
-		sb.WriteString(fmt.Sprintf("id: `%d`\n描述: `%s`\n内容: ```\n%s\n```\n\n ------------ \n\n", memo.ID, memo.Description, memo.Content))
+		sb.WriteString(memo.String())
 	}
 	return sb.String()
 }

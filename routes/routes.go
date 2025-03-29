@@ -113,7 +113,13 @@ func (r *Routes) SearchRelatedText() {
 			return mcp.NewToolResultError("无法检索文本, 错误:" + err.Error()), nil
 		}
 
-		return mcp.NewToolResultText(answer), nil
+		answerStr := ""
+		for _, blockId := range answer {
+			content := r.File.ReadMemos()[blockId]
+			answerStr += content.String()
+		}
+
+		return mcp.NewToolResultText(answerStr), nil
 	}
 
 	r.McpServer.AddTool(tool, handler)
