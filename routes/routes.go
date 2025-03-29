@@ -124,3 +124,61 @@ func (r *Routes) SearchRelatedText() {
 
 	r.McpServer.AddTool(tool, handler)
 }
+
+func (r *Routes) AddMemoPromt() {
+	handleComplexPrompt := func(
+		ctx context.Context,
+		request mcp.GetPromptRequest,
+	) (*mcp.GetPromptResult, error) {
+		arguments := request.Params.Arguments
+		memo := fileoperate.Memo{
+			Description: arguments["description"],
+			Content:     arguments["content"],
+		}
+		return &mcp.GetPromptResult{
+			Description: "prompt to add a memo",
+			Messages: []mcp.PromptMessage{
+				{
+					Role: mcp.RoleUser,
+					Content: mcp.TextContent{
+						Type: "text",
+						Text: "调用`store_memo`工具, 把以下内容保存到我的memo中",
+					},
+				},
+				{
+					Role: mcp.RoleUser,
+					Content: mcp.TextContent{
+						Type: "text",
+						Text: memo.String(),
+					},
+				},
+				{
+					Role: mcp.RoleAssistant,
+					Content: mcp.TextContent{
+						Type: "text",
+						Text: "好的, 我会直接调用`store_memo`工具, 把内容保存到memo中的",
+					},
+				},
+				{
+					Role: mcp.RoleUser,
+					Content: mcp.TextContent{
+						Type: "text",
+						Text: "好了, 你需要直接调用工具了, 请直接开始",
+					},
+				},
+			},
+		}, nil
+	}
+
+	r.McpServer.AddPrompt(mcp.NewPrompt("add_memo_prompt",
+		mcp.WithPromptDescription("prompt to add a memo"),
+		mcp.WithArgument("description",
+			mcp.ArgumentDescription("The description of the memo, for search later"),
+			mcp.RequiredArgument(),
+		),
+		mcp.WithArgument("content",
+			mcp.ArgumentDescription("The content of the memo"),
+			mcp.RequiredArgument(),
+		),
+	), handleComplexPrompt)
+}

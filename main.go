@@ -15,6 +15,8 @@ func main() {
 	r.Repeat()
 	r.SearchRelatedText()
 
+	r.AddMemoPromt()
+
 	if err := server.ServeStdio(r.McpServer); err != nil {
 		fmt.Printf("Server error: %v\n", err)
 	}
