@@ -8,5 +8,10 @@
       "id": 5,
       "description": "微信12月份东方财富OSS路径",
       "content": "东方财富上海/深圳财报：\noss://moonshot-train-data/Text/MidResults/Books/Tencent_ocr/prod_east_money_shanghai/page_books_ray\noss://moonshot-train-data/Text/MidResults/Books/Tencent_ocr/prod_east_money_shenzhen/page_books_ray\noss://moonshot-train-data/Text/MidResults/Books/Tencent_ocr/prod_east_money_shanghai_remain/page_books_ray\n东方财富研报数据：\noss://moonshot-train-data/Text/MidResults/Books/Tencent_ocr/prod_east_money/page_books_ray/"
+    },
+    {
+      "id": 6,
+      "description": "mark的apikey",
+      "content": "os.environ['OPENAI_BASE_URL'] = 'https://api.anthropic.com'\nos.environ['OPENAI_API_KEY'] = 'sk-FuJb5dsdf9fjlskdjflksjdfcf4YAftD'\nos.environ['OPENAI_MODEL'] = 'claude-3-7-sonnet-20250219'"
     }
   ]

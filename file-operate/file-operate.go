@@ -25,14 +25,18 @@ type File struct {
 	memos map[uint64]Memo
 }
 
-func OpenFile(path string) (*File, error) {
-	execPath, err := os.Executable()
-	if err != nil {
-		return nil, err
+func OpenFile(path string, fullPathOK bool) (*File, error) {
+	var fullPath string
+	if fullPathOK {
+		fullPath = path
+	} else {
+		execPath, err := os.Executable()
+		if err != nil {
+			return nil, err
+		}
+		fullPath = filepath.Join(execPath, path)
 	}
 
-	dir := filepath.Dir(execPath)
-	fullPath := filepath.Join(dir, path)
 	file, err := os.OpenFile(fullPath, os.O_RDWR|os.O_CREATE, 0o644)
 	if err != nil {
 		return nil, err

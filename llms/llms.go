@@ -99,6 +99,7 @@ func (ac *AnthropicClient) SearchContent(ctx context.Context, des string, allCon
 		if err != nil {
 			return nil, err
 		}
+		// 字符串是这样的 "[\"4\", \"6\"]"
 		if blockId, err = ac.findJson(jsonContent); err != nil {
 			return nil, err
 		}
@@ -146,7 +147,7 @@ func (ac *AnthropicClient) ExtractNumberFromContent(content string) []uint64 {
 	return blockIds
 }
 
-// 在一个字符串中, 找到第一个‘[’和最后一个‘]’之间的内容
+// 在一个字符串中, 找到第一个'['和最后一个']'之间的内容
 func (ac *AnthropicClient) findJson(content string) ([]uint64, error) {
 	re := regexp.MustCompile(`\[(.*?)\]`)
 	matches := re.FindStringSubmatch(content)
@@ -155,9 +156,24 @@ func (ac *AnthropicClient) findJson(content string) ([]uint64, error) {
 	}
 	jsonContent := matches[0]
 
-	var val []uint64
-	if err := sonic.UnmarshalString(jsonContent, &val); err != nil {
+	var val []interface{}
+	if err := sonic.Unmarshal([]byte(jsonContent), &val); err != nil {
 		return nil, err
 	}
-	return val, nil
+
+	blockIds := make([]uint64, 0, len(val))
+	for _, v := range val {
+		switch v := v.(type) {
+		case uint64:
+			blockIds = append(blockIds, v)
+		case string:
+			blockId, err := strconv.ParseUint(v, 10, 64)
+			if err != nil {
+				continue
+			}
+			blockIds = append(blockIds, blockId)
+		}
+	}
+
+	return blockIds, nil
 }

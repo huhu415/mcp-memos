@@ -25,7 +25,7 @@ type Routes struct {
 }
 
 func NewRoutes(filePath string) *Routes {
-	file, err := fileoperate.OpenFile(filePath)
+	file, err := fileoperate.OpenFile(filePath, false)
 	if err != nil {
 		logrus.Panicf("Panic!!! Failed to open file: %v", err)
 	}
