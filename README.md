@@ -58,3 +58,5 @@ Please help me find the records about {description}
 > LLM_BASE_URL optional, default is https://api.anthropic.com
 >
 > ANTHROPIC_MODEL optional, default is claude-3-7-sonnet-20250219
+>
+> Will accelerate the implementation of the [sampling](https://spec.modelcontextprotocol.io/specification/2025-03-26/client/sampling/) feature, which will eliminate the need to configure all environment parameters
