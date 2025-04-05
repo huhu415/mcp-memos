@@ -52,6 +52,10 @@ When you need it later, just say:
 Please help me find the records about {description}
 ```
 
+### Example
+
+![demo](demo.gif)
+
 > [!NOTE]
 > The description can be different each time, as long as the description is roughly the same thing
 >
