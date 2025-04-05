@@ -108,14 +108,22 @@ func (r *Routes) SearchRelatedText() {
 		}
 		mcp.NewLoggingMessageNotification(mcp.LoggingLevelInfo, "get_answer", description)
 
-		answer, err := r.llm.SearchContent(ctx, description, r.File.LLMReadableMemos())
+		memoString, err := r.File.LLMReadableMemos()
+		if err != nil {
+			return mcp.NewToolResultError("readMemos err"), err
+		}
+		answer, err := r.llm.SearchContent(ctx, description, memoString)
 		if err != nil {
 			return mcp.NewToolResultError("无法检索文本, 错误:" + err.Error()), nil
 		}
 
+		memos, err := r.File.ReadMemos()
+		if err != nil {
+			return mcp.NewToolResultError("readMemos err"), err
+		}
 		answerStr := ""
 		for _, blockId := range answer {
-			content := r.File.ReadMemos()[blockId]
+			content := memos[blockId]
 			answerStr += content.String()
 		}
 
