@@ -2,7 +2,18 @@
 
 MCP-Memos is an memo tool based on [MCP](https://modelcontextprotocol.io/introduction) that allows users to record and retrieve text information.
 
-It's perfect for developers to quickly save and find information in their workflow without switching to other applications.
+It's perfect for developers to quickly save and find information in their workflow(may be cursor, etc) without switching to other applications.
+
+## 🔍 Advanced LLM-Powered Search
+
+MCP-Memos uses large language models for retrieval, providing the **most powerful fuzzy search capability available**:
+
+- **Semantic understanding**: Find content based on meaning, not just keywords
+- **Context-aware**: Understands what you're looking for even with incomplete descriptions
+- **Natural language queries**: Search as you would ask a human, no special syntax needed
+- **Conceptual matching**: Retrieves information by understanding concepts, not just text matching
+
+Unlike traditional vector or text-based fuzzy search, MCP-Memos leverages the full power of LLMs to truly understand your retrieval intent, making it the most effective information retrieval approach available today.
 
 ## Tool Documentation
 
@@ -11,7 +22,7 @@ It's perfect for developers to quickly save and find information in their workfl
 |store_memo| Save important text information and add tags for easy retrieval  later| `tag`:keyword or tag or description <br> `content`: that you want to save    |
 |retrieve_memo| Retrieve previously saved text content based on keywords | `text` keyword or tag or description |
 
-## Usage
+## How to Use
 ### Installation
 Download the mcp-memos binary file according to your computer's architecture from [releases](https://github.com/huhu415/mcp-memos/releases)
 
@@ -32,28 +43,26 @@ Add MCP-Memos to the macPilotCli configuration file
 }
 ```
 
-### Record information
-Sometimes when we're developing, we need to record some information.
-1. Don't want to open a note-taking app to record, it's too cumbersome
-2. If you've opened a note-taking app to record, it's difficult to find the information later
-
+### Basic Usage
 
 ### Record information
-You can use MCP-Memos to record information by saying:
+When you need to save information during development without switching to another app:
+
 ```
-Please record this for me. This is {description}
+record this memo. its {description}
 
 {content}
 ```
 
 ### Retrieve information
-When you need it later, just say:
+When you need to find previously saved information:
+
 ```
-Please help me find the records about {description}
+Find this memo about {description}
 ```
 
 > [!NOTE]
-> The description can be different each time, as long as the description is roughly the same thing
+> Descriptions can vary as MCP-Memo's LLM understands concepts, not just keywords, matching similar content regardless of wording.
 >
 > LLM_BASE_URL optional, default is https://api.anthropic.com
 >
