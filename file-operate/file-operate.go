@@ -23,7 +23,6 @@ func (m *Memo) String() string {
 
 type File struct {
 	*os.File
-	memos map[uint64]Memo
 }
 
 func OpenFile(path string, fullPathOK bool) (*File, error) {
@@ -43,56 +42,34 @@ func OpenFile(path string, fullPathOK bool) (*File, error) {
 		return nil, err
 	}
 
+	return &File{file}, nil
+}
+
+// font Hook
+// ReadMemos reads memos from disk each time it's called
+func (f *File) ReadMemos() (map[uint64]Memo, error) {
+	// Seek to the beginning of file
+	if _, err := f.File.Seek(0, io.SeekStart); err != nil {
+		return nil, err
+	}
+
 	var memos []Memo
-	sonic.ConfigDefault.NewDecoder(file).Decode(&memos)
+	err := sonic.ConfigDefault.NewDecoder(f.File).Decode(&memos)
+	if err != nil && err != io.EOF {
+		return nil, err
+	}
 
 	memoMap := make(map[uint64]Memo)
 	for _, memo := range memos {
 		memoMap[memo.ID] = memo
 	}
 
-	return &File{file, memoMap}, nil
+	return memoMap, nil
 }
 
-func (f *File) ReadMemos() map[uint64]Memo {
-	return f.memos
-}
-
-func (f *File) AppendMemo(memo Memo) {
-	memo.ID = f.findMaxID() + 1
-
-	waitToAppend := removeWhitespace(memo.Content)
-	for _, v := range f.memos {
-		if removeWhitespace(v.Content) == waitToAppend {
-			return
-		}
-	}
-
-	f.memos[memo.ID] = memo
-}
-
-func (f *File) LLMReadableMemos() string {
-	sb := strings.Builder{}
-	for _, memo := range f.memos {
-		sb.WriteString(memo.String())
-	}
-	return sb.String()
-}
-
-func (f *File) findMaxID() uint64 {
-	maxID := uint64(0)
-	for id := range f.memos {
-		if id > maxID {
-			maxID = id
-		}
-	}
-	return maxID
-}
-
-func (f *File) WriteToFile() error {
-	if err := f.File.Sync(); err != nil {
-		return err
-	}
+// after Hook
+func (f *File) writeMemos(memos map[uint64]Memo) error {
+	// Reset file content
 	if err := f.File.Truncate(0); err != nil {
 		return err
 	}
@@ -100,12 +77,14 @@ func (f *File) WriteToFile() error {
 		return err
 	}
 
-	memos := make([]Memo, 0, len(f.memos))
-	for _, memo := range f.memos {
-		memos = append(memos, memo)
+	// Convert map to slice for serialization
+	memosSlice := make([]Memo, 0, len(memos))
+	for _, memo := range memos {
+		memosSlice = append(memosSlice, memo)
 	}
 
-	byt, err := sonic.MarshalIndent(memos, "", "  ")
+	// Write to file
+	byt, err := sonic.MarshalIndent(memosSlice, "", "  ")
 	if err != nil {
 		return err
 	}
@@ -114,10 +93,48 @@ func (f *File) WriteToFile() error {
 	return err
 }
 
-func (f *File) Close() error {
-	if err := f.WriteToFile(); err != nil {
+func (f *File) AppendMemo(memo Memo) error {
+	memos, err := f.ReadMemos()
+	if err != nil {
 		return err
 	}
+
+	// Find max ID
+	maxID := uint64(0)
+	for id := range memos {
+		if id > maxID {
+			maxID = id
+		}
+	}
+	memo.ID = maxID + 1
+
+	// Check for duplicates
+	waitToAppend := removeWhitespace(memo.Content)
+	for _, v := range memos {
+		if removeWhitespace(v.Content) == waitToAppend {
+			return nil // Duplicate found, silently return
+		}
+	}
+	memos[memo.ID] = memo
+
+	// Write back to file
+	return f.writeMemos(memos)
+}
+
+func (f *File) LLMReadableMemos() (string, error) {
+	memos, err := f.ReadMemos()
+	if err != nil {
+		return "", err
+	}
+
+	sb := strings.Builder{}
+	for _, memo := range memos {
+		sb.WriteString(memo.String())
+	}
+	return sb.String(), nil
+}
+
+func (f *File) Close() error {
 	return f.File.Close()
 }
 

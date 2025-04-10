@@ -27,10 +27,10 @@ go.work.sum
 huhu
 
 /*.txt
-/*.md
 Makefile
 dist
 mcp-memos
 .history
 .vscode
 test.json
+memos.json

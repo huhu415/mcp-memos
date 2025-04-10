@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	r := routes.NewRoutes("test.json")
+	r := routes.NewRoutes("memos.json")
 	defer r.File.Close()
 
 	r.SaveText()

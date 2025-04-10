@@ -26,7 +26,8 @@ func TestSearchContent(t *testing.T) {
 
 	logrus.Debugln("file: ", file.Name())
 
-	result, err := ac.SearchContent(ctx, des, file.LLMReadableMemos())
+	memoString, err := file.LLMReadableMemos()
+	result, err := ac.SearchContent(ctx, des, memoString)
 	assert.NoError(t, err)
 
 	fmt.Println(result)
